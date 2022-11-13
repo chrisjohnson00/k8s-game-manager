@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template
+    Blueprint, render_template, redirect, url_for
 )
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta
@@ -26,7 +26,7 @@ def index():
 def restart():
     apps_client = client.AppsV1Api()
     restart_deployment(apps_client, "rust-lg", "rust")
-    return render_template('app/health.html')
+    return redirect(url_for('app.index'))
 
 
 @bp.route('/health')
