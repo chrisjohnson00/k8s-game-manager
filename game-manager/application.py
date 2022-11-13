@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template, redirect, url_for,flash
+    Blueprint, render_template, redirect, url_for, flash
 )
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta
