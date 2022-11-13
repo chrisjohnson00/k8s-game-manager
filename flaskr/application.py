@@ -9,7 +9,7 @@ bp = Blueprint('app', __name__, url_prefix='/')
 
 @bp.route('/')
 def index():
-    namespaces = ['rust', 'minecraft']
+    namespaces = ['rust']
     apps_client = client.AppsV1Api()
     games = []
     for namespace in namespaces:
