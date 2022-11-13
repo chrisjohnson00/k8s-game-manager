@@ -1,6 +1,5 @@
-import os
 from flask import (
-    Blueprint, render_template, current_app as app, request
+    Blueprint, render_template
 )
 
 bp = Blueprint('app', __name__, url_prefix='/')
