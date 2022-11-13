@@ -4,5 +4,8 @@ metadata:
   name: game-manager
 rules:
   - apiGroups: [""]
-    resources: ["pods", "StatefulSet", "pods/log"]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["StatefulSet"]
     verbs: ["get", "list", "patch"]
