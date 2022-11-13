@@ -11,5 +11,5 @@ def index():
 
 
 @bp.route('/health', methods='GET')
-def index():
+def health():
     return render_template('app/list.html')
