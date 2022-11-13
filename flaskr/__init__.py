@@ -1,5 +1,7 @@
 from logging.config import dictConfig
 from flask import Flask
+import os
+from kubernetes import config
 
 
 def create_app():
@@ -22,6 +24,12 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
     from . import application
+
+    if os.environ.get('USE_K8S_CONFIG_FILE'):
+        config.load_kube_config()
+    else:
+        config.load_incluster_config()
+
     app.register_blueprint(application.bp)
 
     return app
