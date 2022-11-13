@@ -35,23 +35,23 @@ spec:
             requests:
               cpu: 10m
               memory: 60Mi
-#          livenessProbe:
-#            failureThreshold: 3
-#            httpGet:
-#              path: /health
-#              port: http
-#              scheme: HTTP
-#            periodSeconds: 60
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            initialDelaySeconds: 15
-#          readinessProbe:
-#            failureThreshold: 3
-#            httpGet:
-#              path: /health
-#              port: http
-#              scheme: HTTP
-#            periodSeconds: 30
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            initialDelaySeconds: 15
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
