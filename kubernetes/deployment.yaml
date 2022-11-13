@@ -29,9 +29,6 @@ spec:
               name: http
               protocol: TCP
           resources:
-            limits:
-              cpu: 100m
-              memory: 100Mi
             requests:
               cpu: 10m
               memory: 60Mi
