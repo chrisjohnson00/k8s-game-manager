@@ -3,6 +3,8 @@ from flask import (
 )
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta
+from kubernetes.client.rest import ApiException
+import datetime
 
 bp = Blueprint('app', __name__, url_prefix='/')
 
@@ -20,6 +22,32 @@ def index():
     return render_template('app/list.html', games=games)
 
 
+@bp.route('/restart')
+def restart():
+    apps_client = client.AppsV1Api()
+    restart_deployment(apps_client, "rust-lg", "rust")
+
+
 @bp.route('/health')
 def health():
     return render_template('app/health.html')
+
+
+def restart_deployment(v1_apps, name, namespace):
+    now = datetime.datetime.utcnow()
+    now = str(now.isoformat("T") + "Z")
+    body = {
+        'spec': {
+            'template': {
+                'metadata': {
+                    'annotations': {
+                        'kubectl.kubernetes.io/restartedAt': now
+                    }
+                }
+            }
+        }
+    }
+    try:
+        v1_apps.patch_namespaced_stateful_set(name, namespace, body, pretty='true')
+    except ApiException as e:
+        print("Exception when calling AppsV1Api->patch_namespaced_stateful_set: %s\n" % e)
