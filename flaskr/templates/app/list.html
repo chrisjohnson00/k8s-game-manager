@@ -7,6 +7,6 @@
 {% block content %}
 <h3>Hello Anders!</h3>
 {% for game in games %}
-{{ game.name }}
+<p>Click to restart: <a href="restart">{{ game.name }}</a></p>
 {% endfor %}
 {% endblock %}
