@@ -32,7 +32,7 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 135Mi
+              memory: 140Mi
           livenessProbe:
             failureThreshold: 3
             httpGet:
