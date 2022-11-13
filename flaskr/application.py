@@ -5,7 +5,7 @@ from flask import (
 bp = Blueprint('app', __name__, url_prefix='/')
 
 
-@bp.route('/', methods=('GET'))
+@bp.route('/', methods='GET')
 def index():
     return render_template('app/list.html')
 
