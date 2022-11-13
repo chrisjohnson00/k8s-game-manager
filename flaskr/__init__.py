@@ -22,6 +22,7 @@ def create_app():
     })
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    app.secret_key = b'8kI*3Z8&8Ce3on@2u2V'
 
     from . import application
 
