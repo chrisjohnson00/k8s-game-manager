@@ -21,7 +21,7 @@ def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    from . import topics
-    app.register_blueprint(topics.bp)
+    from . import application
+    app.register_blueprint(application.bp)
 
     return app
