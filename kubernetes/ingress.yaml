@@ -5,13 +5,13 @@ metadata:
   namespace: game-manager
 spec:
   rules:
-  - host: game-manager.cluster.int
-    http:
-      paths:
-      - backend:
-          service:
-            name: game-manager
-            port:
-              number: 80
-        pathType: Prefix
-        path: /
+    - host: game-manager.cluster.int
+      http:
+        paths:
+          - backend:
+              service:
+                name: game-manager
+                port:
+                  number: 80
+            pathType: Prefix
+            path: /
