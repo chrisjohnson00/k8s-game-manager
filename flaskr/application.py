@@ -5,6 +5,11 @@ from flask import (
 bp = Blueprint('app', __name__, url_prefix='/')
 
 
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET'))
+def index():
+    return render_template('app/list.html')
+
+
+@bp.route('/health', methods='GET')
 def index():
     return render_template('app/list.html')
