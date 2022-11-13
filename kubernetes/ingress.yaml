@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: game-manager
+  namespace: game-manager
+spec:
+  rules:
+  - host: game-manager.cluster.int
+    http:
+      paths:
+      - backend:
+          service:
+            name: game-manager
+            port:
+              number: 80
+        pathType: Prefix
+        path: /

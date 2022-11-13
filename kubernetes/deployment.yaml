@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-manager
+  namespace: game-manager
+  labels:
+    app: game-manager
+    version: latest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game-manager
+  template:
+    metadata:
+      labels:
+        app: game-manager
+        version: latest
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: game-manager
+          image: chrisjohnson00/k8s-game-manager:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 60Mi
