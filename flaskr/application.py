@@ -12,4 +12,4 @@ def index():
 
 @bp.route('/health', methods='GET')
 def health():
-    return render_template('app/list.html')
+    return render_template('app/health.html')
