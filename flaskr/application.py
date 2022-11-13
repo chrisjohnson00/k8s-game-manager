@@ -26,6 +26,7 @@ def index():
 def restart():
     apps_client = client.AppsV1Api()
     restart_deployment(apps_client, "rust-lg", "rust")
+    return render_template('app/health.html')
 
 
 @bp.route('/health')
