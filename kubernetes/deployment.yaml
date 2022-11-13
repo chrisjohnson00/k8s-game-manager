@@ -17,9 +17,9 @@ spec:
         app: game-manager
         version: latest
     spec:
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
+#      securityContext:
+#        runAsUser: 1000
+#        runAsGroup: 1000
       containers:
         - name: game-manager
           image: chrisjohnson00/k8s-game-manager:latest
