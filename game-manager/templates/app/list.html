@@ -17,9 +17,9 @@
     {% for game in games %}
     <tr>
         <th scope="row">{{ game.name }}</th>
-        <td>{% if game.replicas > 0 %}<i class="fa-solid fa-plug-circle-check" style="color: green" title="Running"></i>{%
-            else %}<i
-                    class="fa-solid fa-plug-circle-xmark" style="color: red" title="Stopped"></i>{%endif%}
+        <td>{% if game.replicas > 0 %}<a href="{{ url_for('app.power_cycle',cycle_type='off',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i class="fa-solid fa-plug-circle-check" style="color: green" title="Click to Stop"></i></a>{%
+            else %}<a href="{{ url_for('app.power_cycle',cycle_type='on',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                    class="fa-solid fa-plug-circle-xmark" style="color: red" title="Click to Start"></i></a>{%endif%}
         </td>
         <td>
             <a href="{{ url_for('app.restart',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
