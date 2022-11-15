@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, render_template, redirect, url_for, flash
 )
-from services.k8s import get_deployments, get_statefulsets, restart_deployment
+from services.k8s import get_deployments, get_statefulsets, restart_game_deployment
 
 bp = Blueprint('app', __name__, url_prefix='/')
 
@@ -16,10 +16,10 @@ def index():
     return render_template('app/list.html', games=games)
 
 
-@bp.route('/restart')
-def restart():
-    restart_deployment("rust-lg", "rust")
-    flash("Restarted rust-lg")
+@bp.route('/restart/<deployment_type>/<namespace>/<name>')
+def restart(deployment_type, namespace, name):
+    restart_game_deployment(namespace, deployment_type, name)
+    flash(f"Restarted {name}")
     return redirect(url_for('app.index'))
 
 

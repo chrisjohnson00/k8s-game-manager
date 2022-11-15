@@ -13,7 +13,7 @@ def get_deployments(games, namespaces):
             metadata = deployment.metadata  # type: V1ObjectMeta
             spec = deployment.spec  # type: V1DeploymentSpec
             replicas = spec.replicas
-            games.append({'name': metadata.name, 'type': 'deployment', 'namespace': namespace, 'replicas': replicas})
+            games.append({'name': metadata.name, 'deployment_type': 'deployment', 'namespace': namespace, 'replicas': replicas})
     return games
 
 
@@ -25,11 +25,11 @@ def get_statefulsets(games, namespaces):
             metadata = sts.metadata  # type: V1ObjectMeta
             spec = sts.spec  # type: V1StatefulSetSpec
             replicas = spec.replicas
-            games.append({'name': metadata.name, 'type': 'sts', 'namespace': namespace, 'replicas': replicas})
+            games.append({'name': metadata.name, 'deployment_type': 'statefulset', 'namespace': namespace, 'replicas': replicas})
     return games
 
 
-def restart_deployment(name, namespace):
+def restart_game_deployment(namespace, deployment_type, name):
     v1_apps = client.AppsV1Api()
     now = datetime.datetime.utcnow()
     now = str(now.isoformat("T") + "Z")
@@ -44,7 +44,17 @@ def restart_deployment(name, namespace):
             }
         }
     }
-    try:
-        v1_apps.patch_namespaced_stateful_set(name, namespace, body, pretty='true')
-    except ApiException as e:
-        print("Exception when calling AppsV1Api->patch_namespaced_stateful_set: %s\n" % e)
+    if deployment_type == 'statefulset':
+        try:
+            v1_apps.patch_namespaced_stateful_set(name, namespace, body, pretty='true')
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->patch_namespaced_stateful_set: %s\n" % e)
+            raise e
+    elif deployment_type == 'deployment':
+        try:
+            v1_apps.patch_namespaced_deployment(name, namespace, body, pretty='true')
+        except ApiException as e:
+            print("Exception when calling AppsV1Api->patch_namespaced_deployment: %s\n" % e)
+            raise e
+    else:
+        raise ValueError(f'{deployment_type} is not a valid deployment type')

@@ -17,10 +17,13 @@
     {% for game in games %}
     <tr>
         <th scope="row">{{ game.name }}</th>
-        <td>{% if game.replicas > 0 %}<i class="fa-solid fa-plug-circle-check" style="color: green"  title="Running"></i>{% else %}<i
-                class="fa-solid fa-plug-circle-xmark" style="color: red"  title="Stopped"></i>{%endif%}
+        <td>{% if game.replicas > 0 %}<i class="fa-solid fa-plug-circle-check" style="color: green" title="Running"></i>{%
+            else %}<i
+                    class="fa-solid fa-plug-circle-xmark" style="color: red" title="Stopped"></i>{%endif%}
         </td>
-        <td><a href="restart"><i class="fa-solid fa-recycle"></i></a></td>
+        <td>
+            <a href="{{ url_for('app.restart',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                    class="fa-solid fa-recycle"></i></a></td>
     </tr>
     {% endfor %}
     </tbody>
