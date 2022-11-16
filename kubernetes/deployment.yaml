@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-manager
+  namespace: game-manager
+  labels:
+    app: game-manager
+    version: latest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game-manager
+  template:
+    metadata:
+      labels:
+        app: game-manager
+        version: latest
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+      serviceAccountName: game-manager
+      containers:
+        - name: game-manager
+          image: chrisjohnson00/k8s-game-manager:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 140Mi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 15
