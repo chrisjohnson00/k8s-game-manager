@@ -42,7 +42,7 @@ def relative_time(date):
         def format(self):
             for period in ['year', 'month', 'day', 'hour', 'minute', 'second']:
                 n = getattr(self, period)
-                if n > 0:
+                if n > 1:
                     return '{0} ago'.format(formatn(n, period))
             return "just now"
 
