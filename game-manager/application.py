@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, render_template, redirect, url_for, flash
 )
-from services.k8s import get_deployments, get_statefulsets, restart_game_deployment, scale
+from services.k8s import get_deployments, get_statefulsets, restart_game_deployment, scale, get_game_details, get_logs
 
 bp = Blueprint('app', __name__, url_prefix='/')
 
@@ -38,3 +38,15 @@ def power_cycle(cycle_type, deployment_type, namespace, name):
     else:
         raise ValueError(f'{cycle_type} is not a valid cycle type')
     return redirect(url_for('app.index'))
+
+
+@bp.route('/details/<deployment_type>/<namespace>/<name>')
+def details(deployment_type, namespace, name):
+    game = get_game_details(namespace=namespace, name=name, deployment_type=deployment_type)
+    return render_template('app/details.html', game=game)
+
+
+@bp.route('/logs/<namespace>/<name>')
+def logs(namespace, name):
+    pod_logs = get_logs(namespace=namespace, pod_name=name)
+    return render_template('app/logs.html', logs=pod_logs)
