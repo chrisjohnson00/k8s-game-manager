@@ -5,9 +5,50 @@
 {% endblock %}
 
 {% block content %}
-{{ game }}
-<h3>Logs</h3>
-<textarea id="pod_logs" rows="31" cols="100" readonly></textarea>
+<table class="table table-striped">
+    <tbody>
+    <tr>
+        <td>Status</td>
+        <td>{% if game.replicas > 0 %}
+            <a onclick="return confirm('Are you sure you want to stop {{ game.name }}?')"
+               href="{{ url_for('app.power_cycle',cycle_type='off',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                    class="fa-solid fa-plug-circle-check" style="color: green" title="Click to Stop"></i></a>
+            {% else %}<a
+                    href="{{ url_for('app.power_cycle',cycle_type='on',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                    class="fa-solid fa-plug-circle-xmark" style="color: red" title="Click to Start"></i></a>
+            {%endif%}
+            {{ pod.status.phase }}
+        </td>
+    </tr>
+    {% if game.replicas == 1 %}
+    <tr>
+        <td>Run Time</td>
+        <td><i class="fa-regular fa-clock"></i> {{ pod_running_since }}</td>
+    </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% if game.replicas == 1 %}
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                Logs
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+             data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+        <textarea id="pod_logs" rows="26" cols="100"
+                  style="font-family: ui-monospace; resize:none; border:none; outline:none;"
+                  readonly></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 {% block footer_content %}
 <script>
@@ -38,6 +79,20 @@ function changeContent(contents)
     var x = document.getElementById('pod_logs');
     x.value = contents;
 }
+
+{% if game.replicas == 1 %}
+updateLogs()
+const interval = setInterval(function() {
+   updateLogs()
+ }, 5000);
+{% endif %}
+
+
+
+
+
+
+
 
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1StatefulSetSpec, V1DeploymentList, \
-    V1DeploymentSpec
+    V1DeploymentSpec, V1Pod
 from kubernetes.client.rest import ApiException
 from kubernetes.client.api.core_v1_api import CoreV1Api
 import datetime
@@ -107,3 +107,9 @@ def get_logs(namespace, pod_name):
     except ApiException as e:
         print("Exception when calling CoreV1Api->read_namespaced_pod_log: %s\n" % e)
         return ""
+
+
+def get_pod_details(namespace, pod_name):
+    core_client = client.CoreV1Api()  # type: CoreV1Api
+    pod = core_client.read_namespaced_pod(name=pod_name, namespace=namespace)  # type: V1Pod
+    return pod
