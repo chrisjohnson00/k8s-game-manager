@@ -46,7 +46,7 @@ def details(deployment_type, namespace, name):
     game = services.k8s.get_game_details(namespace=namespace, name=name, deployment_type=deployment_type)
     pod = None
     pod_running_since = None
-    if game['replicas'] > 0:
+    if game['pod_name']:
         pod = services.k8s.get_pod_details(namespace=namespace, pod_name=game['pod_name'])
         if pod.status.start_time:
             pod_running_since = utilities.relative_time.relative_time(pod.status.start_time)
