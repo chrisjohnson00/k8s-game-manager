@@ -87,14 +87,31 @@ def scale(namespace, deployment_type, name, new_replica_count):
 
 
 def get_game_details(namespace, name, deployment_type):
+    pod_name = None
     if deployment_type == "statefulset":
         apps_client = client.AppsV1Api()
         sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)
         metadata = sts.metadata  # type: V1ObjectMeta
         spec = sts.spec  # type: V1StatefulSetSpec
         replicas = spec.replicas
-        return {'name': metadata.name, 'deployment_type': 'statefulset', 'namespace': namespace, 'replicas': replicas,
-                'pod_name': f'{metadata.name}-0'}
+        if replicas > 0:
+            pod_name = f'{metadata.name}-0'
+        return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
+                'pod_name': pod_name}
+    elif deployment_type == "deployment":
+        apps_client = client.AppsV1Api()
+        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)
+        metadata = deployment.metadata  # type: V1ObjectMeta
+        spec = deployment.spec  # type: V1DeploymentSpec
+        replicas = spec.replicas
+        if replicas > 0:
+            pods = get_pods_matching_label(namespace=namespace, label=f"app={name}")
+            # It seems that right after a restart there could be a time where this returns no pods
+            if len(pods.items) > 0:
+                pod = pods.items.pop()  # type: V1Pod
+                pod_name = pod.metadata.name
+        return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
+                'pod_name': pod_name}
     else:
         raise ValueError(f'{deployment_type} is not a valid deployment type')
 
@@ -113,3 +130,9 @@ def get_pod_details(namespace, pod_name):
     core_client = client.CoreV1Api()  # type: CoreV1Api
     pod = core_client.read_namespaced_pod(name=pod_name, namespace=namespace)  # type: V1Pod
     return pod
+
+
+def get_pods_matching_label(namespace, label):
+    core_client = client.CoreV1Api()  # type: CoreV1Api
+    pod_list = core_client.list_namespaced_pod(namespace=namespace, label_selector=label)
+    return pod_list

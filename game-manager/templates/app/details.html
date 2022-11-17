@@ -9,18 +9,18 @@
     <tbody>
     <tr>
         <td>Status</td>
-        <td>{% if game.replicas > 0 %}
+        <td>{% if game.pod_name %}
             <a onclick="return confirm('Are you sure you want to stop {{ game.name }}?')"
                href="{{ url_for('app.power_cycle',cycle_type='off',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
-                    class="fa-solid fa-plug-circle-check" style="color: green" title="Click to Stop"></i></a>
+                    class="fa-solid fa-plug-circle-check" style="color: green" title="Click to Stop"></i></a> {{
+            pod.status.phase }}
             {% else %}<a
                     href="{{ url_for('app.power_cycle',cycle_type='on',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
                     class="fa-solid fa-plug-circle-xmark" style="color: red" title="Click to Start"></i></a>
             {%endif%}
-            {{ pod.status.phase }}
         </td>
     </tr>
-    {% if game.replicas == 1 %}
+    {% if game.pod_name %}
     <tr>
         <td>Start Time</td>
         <td><i class="fa-regular fa-clock"></i> {{ pod_running_since }}</td>
@@ -29,7 +29,7 @@
     </tbody>
 </table>
 
-{% if game.replicas == 1 %}
+{% if game.pod_name %}
 <div class="accordion" id="accordionExample">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
@@ -41,7 +41,7 @@
         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
              data-bs-parent="#accordionExample">
             <div class="accordion-body">
-        <textarea id="pod_logs" rows="27" cols="100"
+        <textarea id="pod_logs" rows="29" cols="100"
                   style="font-family: monospace; resize:none; border:none; outline:none;"
                   readonly></textarea>
             </div>
@@ -51,6 +51,7 @@
 {% endif %}
 {% endblock %}
 {% block footer_content %}
+{% if game.pod_name %}
 <script>
 function makeHttpObject()
 {
@@ -80,19 +81,11 @@ function changeContent(contents)
     x.value = contents;
 }
 
-{% if game.replicas == 1 %}
+
 updateLogs()
 const interval = setInterval(function() {
    updateLogs()
  }, 5000);
-{% endif %}
-
-
-
-
-
-
-
-
 </script>
+{% endif %}
 {% endblock %}
