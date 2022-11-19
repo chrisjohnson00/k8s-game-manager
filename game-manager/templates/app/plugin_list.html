@@ -10,7 +10,7 @@
     <tr>
         <th scope="row">{{ file }}</th>
         <td>
-            <a href="{{ url_for('app.delete_plugin', namespace=game.namespace, name=game.name, game_name=game.game_name, file_name=file, deployment_type=deployment_type) }}"><i
+            <a href="{{ url_for('app.delete_plugin', namespace=namespace, name=name, game_name=game_name, file_name=file, deployment_type=deployment_type) }}"><i
                     class="fa-regular fa-trash-can"></i></a></td>
     </tr>
     {% endfor %}
