@@ -1,5 +1,6 @@
 import services.k8s
 import utilities.relative_time
+import utilities.plugins
 import os
 from flask import (
     Blueprint, render_template, redirect, url_for, flash, request, current_app as app
@@ -67,11 +68,7 @@ def logs(namespace, name):
 
 @bp.route('/plugins/<deployment_type>/<namespace>/<name>/<game_name>')
 def list_plugins(deployment_type, namespace, name, game_name):
-    base_path = "/game-mounts"
-    pvc_volume = services.k8s.get_pvc_volume(namespace=namespace, name=name)
-    plugin_path = {'rust': 'oxide/plugins'}
-    pvc_path = f'{base_path}/{namespace}-{name}-{pvc_volume}/'
-    full_path = f'{pvc_path}{plugin_path[game_name]}/'
+    full_path = utilities.plugins.get_path_to_plugins(game_name, name, namespace)
     files = []
     if os.path.exists(full_path):
         files = os.listdir(full_path)
@@ -85,7 +82,10 @@ def list_plugins(deployment_type, namespace, name, game_name):
 def delete_plugin(deployment_type, namespace, name, game_name):
     args = request.args
     file_name = args.get("file_name")
+    full_path = utilities.plugins.get_path_to_plugins(game_name, name, namespace)
     flash(f"Deleting {file_name}... but not really, still testing")
-    app.logger.info(f"Deleting {file_name}")
+    delete_path = f'{full_path}/{file_name}'
+    app.logger.info(f"Deleting {delete_path}")
+    os.remove(delete_path)
     return redirect(
         url_for('app.details', namespace=namespace, name=name, game_name=game_name, deployment_type=deployment_type))
