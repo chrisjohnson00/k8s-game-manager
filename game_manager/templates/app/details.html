@@ -23,7 +23,10 @@
     {% if game.pod_name %}
     <tr>
         <td>Start Time</td>
-        <td><i class="fa-regular fa-clock"></i> {{ pod_running_since }}</td>
+        <td><i class="fa-regular fa-clock"></i> {{ pod_running_since }} <a
+                onclick="return confirm('Are you sure you want to restart {{ game.name }}?')"
+                href="{{ url_for('app.restart',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                class="fa-solid fa-recycle"></i></a></td>
     </tr>
     {% endif %}
     </tbody>
