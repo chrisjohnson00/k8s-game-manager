@@ -83,7 +83,7 @@ def delete_plugin(deployment_type, namespace, name, game_name):
     args = request.args
     file_name = args.get("file_name")
     full_path = utilities.plugins.get_path_to_plugins(game_name, name, namespace)
-    flash(f"Deleting {file_name}... but not really, still testing")
+    flash(f"Deleted {file_name}")
     delete_path = f'{full_path}/{file_name}'
     app.logger.info(f"Deleting {delete_path}")
     os.remove(delete_path)
