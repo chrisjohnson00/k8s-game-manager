@@ -23,7 +23,7 @@ def index():
 def restart(deployment_type, namespace, name):
     services.k8s.restart_game_deployment(namespace, deployment_type, name)
     flash(f"Restarted {name}")
-    bp.logger.info(f"Restarted {name}")
+    application.logger.info(f"Restarted {name}")
     return redirect(url_for('app.index'))
 
 
@@ -35,7 +35,7 @@ def health():
 @bp.route('/power/<cycle_type>/<deployment_type>/<namespace>/<name>')
 def power_cycle(cycle_type, deployment_type, namespace, name):
     flash(f"Powering {cycle_type} {name}")
-    bp.logger.info(f"Powering {cycle_type} {name}")
+    application.logger.info(f"Powering {cycle_type} {name}")
     if cycle_type == "on":
         services.k8s.scale(namespace, deployment_type, name, 1)
     elif cycle_type == "off":
@@ -76,7 +76,7 @@ def list_plugins(deployment_type, namespace, name, game_name):
     if os.path.exists(full_path):
         files = os.listdir(full_path)
     else:
-        print(f"Didn't find {full_path}")
+        application.logger.info(f"Didn't find {full_path}")
     return render_template('app/plugin_list.html', files=files, namespace=namespace, name=name, game_name=game_name,
                            deployment_type=deployment_type)
 
@@ -86,6 +86,6 @@ def delete_plugin(deployment_type, namespace, name, game_name):
     args = request.args
     file_name = args.get("file_name")
     flash(f"Deleting {file_name}... but not really, still testing")
-    bp.logger.info(f"Deleting {file_name}")
+    application.logger.info(f"Deleting {file_name}")
     return redirect(
         url_for('app.details', namespace=namespace, name=name, game_name=game_name, deployment_type=deployment_type))
