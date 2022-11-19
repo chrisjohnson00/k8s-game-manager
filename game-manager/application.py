@@ -1,10 +1,12 @@
 import services.k8s
 import utilities.relative_time
+import os
 from flask import (
     Blueprint, render_template, redirect, url_for, flash
 )
 
 bp = Blueprint('app', __name__, url_prefix='/')
+GAMES_WHICH_SUPPORT_PLUGINS = ['rust']
 
 
 @bp.route('/')
@@ -51,10 +53,28 @@ def details(deployment_type, namespace, name):
         if pod.status.start_time:
             pod_running_since = utilities.relative_time.relative_time(pod.status.start_time)
 
-    return render_template('app/details.html', game=game, pod=pod, pod_running_since=pod_running_since)
+    return render_template('app/details.html', game=game, pod=pod, pod_running_since=pod_running_since,
+                           games_which_support_plugins=GAMES_WHICH_SUPPORT_PLUGINS)
 
 
 @bp.route('/logs/<namespace>/<name>')
 def logs(namespace, name):
     pod_logs = services.k8s.get_logs(namespace=namespace, pod_name=name)
     return render_template('app/logs.html', logs=pod_logs)
+
+
+@bp.route('/plugins/<namespace>/<name>/<game_name>')
+def list_plugins(namespace, name, game_name):
+    base_path = "/game-mounts"
+    pvc_volume = services.k8s.get_pvc_volume(namespace=namespace, name=name)
+    plugin_path = {'rust': 'oxide/plugins'}
+    pvc_path = f'{base_path}/{namespace}-{name}-{pvc_volume}/'
+    full_path = f'{pvc_path}{plugin_path[game_name]}/'
+    print(full_path)
+    files = []
+    if os.path.exists(full_path):
+        files = os.listdir(full_path)
+    else:
+        print(f"Didn't find {full_path}")
+    print(files)
+    return render_template('app/plugin_list.html', files=files)

@@ -1,0 +1,16 @@
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">File Name</th>
+        <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for file in files %}
+    <tr>
+        <th scope="row">{{ file }}</th>
+        <td>Add Trash Here To Delete</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
