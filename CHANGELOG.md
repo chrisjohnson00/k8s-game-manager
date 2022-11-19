@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.3.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.3.0) (2022-11-19)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.2.0...v1.3.0)
+
+**Implemented enhancements:**
+
+- feat: add restart to details page [\#15](https://github.com/chrisjohnson00/k8s-game-manager/pull/15) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.2.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.2.0) (2022-11-19)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.1.0...v1.2.0)
