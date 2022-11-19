@@ -2,7 +2,7 @@ import services.k8s
 import utilities.relative_time
 import os
 from flask import (
-    Blueprint, render_template, redirect, url_for, flash
+    Blueprint, render_template, redirect, url_for, flash, request
 )
 
 bp = Blueprint('app', __name__, url_prefix='/')
@@ -23,6 +23,7 @@ def index():
 def restart(deployment_type, namespace, name):
     services.k8s.restart_game_deployment(namespace, deployment_type, name)
     flash(f"Restarted {name}")
+    bp.logger.info(f"Restarted {name}")
     return redirect(url_for('app.index'))
 
 
@@ -34,6 +35,7 @@ def health():
 @bp.route('/power/<cycle_type>/<deployment_type>/<namespace>/<name>')
 def power_cycle(cycle_type, deployment_type, namespace, name):
     flash(f"Powering {cycle_type} {name}")
+    bp.logger.info(f"Powering {cycle_type} {name}")
     if cycle_type == "on":
         services.k8s.scale(namespace, deployment_type, name, 1)
     elif cycle_type == "off":
@@ -63,18 +65,27 @@ def logs(namespace, name):
     return render_template('app/logs.html', logs=pod_logs)
 
 
-@bp.route('/plugins/<namespace>/<name>/<game_name>')
-def list_plugins(namespace, name, game_name):
+@bp.route('/plugins/<deployment_type>/<namespace>/<name>/<game_name>')
+def list_plugins(deployment_type, namespace, name, game_name):
     base_path = "/game-mounts"
     pvc_volume = services.k8s.get_pvc_volume(namespace=namespace, name=name)
     plugin_path = {'rust': 'oxide/plugins'}
     pvc_path = f'{base_path}/{namespace}-{name}-{pvc_volume}/'
     full_path = f'{pvc_path}{plugin_path[game_name]}/'
-    print(full_path)
     files = []
     if os.path.exists(full_path):
         files = os.listdir(full_path)
     else:
         print(f"Didn't find {full_path}")
-    print(files)
-    return render_template('app/plugin_list.html', files=files)
+    return render_template('app/plugin_list.html', files=files, namespace=namespace, name=name, game_name=game_name,
+                           deployment_type=deployment_type)
+
+
+@bp.route('/plugin/delete/<deployment_type>/<namespace>/<name>/<game_name>')
+def delete_plugin(deployment_type, namespace, name, game_name):
+    args = request.args
+    file_name = args.get("file_name")
+    flash(f"Deleting {file_name}... but not really, still testing")
+    bp.logger.info(f"Deleting {file_name}")
+    return redirect(
+        url_for('app.details', namespace=namespace, name=name, game_name=game_name, deployment_type=deployment_type))
