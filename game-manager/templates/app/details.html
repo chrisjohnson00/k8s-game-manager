@@ -116,7 +116,7 @@ const interval = setInterval(function() {
 function getPluginList()
 {
     var request = makeHttpObject();
-    request.open("GET", "{{ url_for('app.list_plugins',namespace=game.namespace, name=game.name, game_name=game.game_name) }}", true);
+    request.open("GET", "{{ url_for('app.list_plugins',namespace=game.namespace, name=game.name, game_name=game.game_name, deployment_type=game.deployment_type) }}", true);
     request.send(null);
     request.onreadystatechange = function() {
       if (request.readyState == 4)
@@ -127,6 +127,7 @@ function getPluginList()
 getPluginList()
 
 {% endif %}
+
 </script>
 {% endif %}
 {% endblock %}
