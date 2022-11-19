@@ -11,7 +11,7 @@ PyPi Dependency updates
 ## Running locally
 
 ```commandline
-export FLASK_APP=game-manager
+export FLASK_APP=game_manager
 export USE_K8S_CONFIG_FILE=true
 export KUBECONFIG=~/.kube/game_config
 flask --debug run

@@ -1,6 +1,6 @@
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1StatefulSetSpec, V1DeploymentList, \
-    V1DeploymentSpec, V1Pod
+    V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec
 from kubernetes.client.rest import ApiException
 from kubernetes.client.api.core_v1_api import CoreV1Api
 import datetime
@@ -90,17 +90,18 @@ def get_game_details(namespace, name, deployment_type):
     pod_name = None
     if deployment_type == "statefulset":
         apps_client = client.AppsV1Api()
-        sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)
+        sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)  # type: V1StatefulSet
         metadata = sts.metadata  # type: V1ObjectMeta
         spec = sts.spec  # type: V1StatefulSetSpec
         replicas = spec.replicas
         if replicas > 0:
             pod_name = f'{metadata.name}-0'
+        game_name = get_annotation_by_name("game", sts)
         return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
-                'pod_name': pod_name}
+                'pod_name': pod_name, 'game_name': game_name}
     elif deployment_type == "deployment":
         apps_client = client.AppsV1Api()
-        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)
+        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)  # type: V1Deployment
         metadata = deployment.metadata  # type: V1ObjectMeta
         spec = deployment.spec  # type: V1DeploymentSpec
         replicas = spec.replicas
@@ -110,10 +111,20 @@ def get_game_details(namespace, name, deployment_type):
             if len(pods.items) > 0:
                 pod = pods.items.pop()  # type: V1Pod
                 pod_name = pod.metadata.name
+        game_name = get_annotation_by_name("game", deployment)
         return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
-                'pod_name': pod_name}
+                'pod_name': pod_name, 'game_name': game_name}
     else:
         raise ValueError(f'{deployment_type} is not a valid deployment type')
+
+
+def get_annotation_by_name(name, thing):
+    metadata = thing.metadata  # type: V1ObjectMeta
+    annotations = metadata.annotations  # type: dict
+    if name in annotations.keys():
+        return annotations[name]
+    else:
+        return None
 
 
 def get_logs(namespace, pod_name):
@@ -136,3 +147,15 @@ def get_pods_matching_label(namespace, label):
     core_client = client.CoreV1Api()  # type: CoreV1Api
     pod_list = core_client.list_namespaced_pod(namespace=namespace, label_selector=label)
     return pod_list
+
+
+def get_pvc(namespace, name):
+    core_client = client.CoreV1Api()  # type: CoreV1Api
+    pvc = core_client.read_namespaced_persistent_volume_claim(namespace=namespace, name=name)
+    return pvc
+
+
+def get_pvc_volume(namespace, name):
+    pvc = get_pvc(namespace=namespace, name=name)  # type: V1PersistentVolumeClaim
+    metadata = pvc.spec  # type: V1PersistentVolumeClaimSpec
+    return metadata.volume_name

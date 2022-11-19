@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h2>{% block title %}{{ game.name }}{% endblock %}</h2>
+<h2>{% block title %}{{ game.name }} ({{ game.game_name.title() }}){% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
@@ -47,6 +47,24 @@
             </div>
         </div>
     </div>
+    {% if game.game_name in games_which_support_plugins %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Plugins
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+             data-bs-parent="#accordionExample">
+            <div class="accordion-body" id="plugin_list">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}
@@ -71,14 +89,21 @@ function updateLogs()
     request.send(null);
     request.onreadystatechange = function() {
       if (request.readyState == 4)
-        changeContent(request.responseText);
+        changeTextAreaContent(request.responseText);
     };
 }
 
-function changeContent(contents)
+function changeTextAreaContent(contents)
 {
     var x = document.getElementById('pod_logs');
     x.value = contents;
+}
+
+
+function changeContent(elementId, contents)
+{
+    var x = document.getElementById(elementId);
+    x.innerHTML = contents;
 }
 
 
@@ -86,6 +111,23 @@ updateLogs()
 const interval = setInterval(function() {
    updateLogs()
  }, 5000);
+
+{% if game.game_name in games_which_support_plugins %}
+function getPluginList()
+{
+    var request = makeHttpObject();
+    request.open("GET", "{{ url_for('app.list_plugins',namespace=game.namespace, name=game.name, game_name=game.game_name, deployment_type=game.deployment_type) }}", true);
+    request.send(null);
+    request.onreadystatechange = function() {
+      if (request.readyState == 4)
+        changeContent('plugin_list',request.responseText);
+    };
+}
+
+getPluginList()
+
+{% endif %}
+
 </script>
 {% endif %}
 {% endblock %}
