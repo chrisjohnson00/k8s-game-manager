@@ -53,3 +53,11 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
             initialDelaySeconds: 15
+          volumeMounts:
+            - mountPath: /game-mounts
+              name: game-mounts
+      volumes:
+        - name: game-mounts
+          hostPath:
+            path: /var/snap/microk8s/common/default-storage
+            type: Directory
