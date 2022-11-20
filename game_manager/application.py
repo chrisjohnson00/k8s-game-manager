@@ -75,6 +75,7 @@ def list_plugins(deployment_type, namespace, name, game_name):
         files = os.listdir(full_path)
     else:
         app.logger.info(f"Didn't find {full_path}")
+    files.sort()
     return render_template('app/plugin_list.html', files=files, namespace=namespace, name=name, game_name=game_name,
                            deployment_type=deployment_type)
 
