@@ -1,19 +1,31 @@
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th scope="col">File Name</th>
-        <th scope="col">Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for file in files %}
-    <tr>
-        <th scope="row">{{ file }}</th>
-        <td>
-            <a onclick="return confirm('Are you sure you want to delete {{ file }}?')"
-               href="{{ url_for('app.delete_plugin', namespace=namespace, name=name, game_name=game_name, file_name=file, deployment_type=deployment_type) }}"><i
-                    class="fa-regular fa-trash-can"></i></a></td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div><h3>Upload a plugin</h3>
+    <form action="{{ url_for('app.upload_plugin', namespace=namespace, name=name, game_name=game_name, deployment_type=deployment_type) }}"
+          method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <input class="form-control" type="file" id="formFile" name="file">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+</div>
+<div class="pt-4">
+    <h3>Plugins</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">File Name</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in files %}
+        <tr>
+            <th scope="row">{{ file }}</th>
+            <td>
+                <a onclick="return confirm('Are you sure you want to delete {{ file }}?')"
+                   href="{{ url_for('app.delete_plugin', namespace=namespace, name=name, game_name=game_name, file_name=file, deployment_type=deployment_type) }}"><i
+                        class="fa-regular fa-trash-can"></i></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

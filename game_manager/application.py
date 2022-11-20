@@ -5,6 +5,7 @@ import os
 from flask import (
     Blueprint, render_template, redirect, url_for, flash, request, current_app as app
 )
+from werkzeug.utils import secure_filename
 
 bp = Blueprint('app', __name__, url_prefix='/')
 GAMES_WHICH_SUPPORT_PLUGINS = ['rust']
@@ -89,3 +90,26 @@ def delete_plugin(deployment_type, namespace, name, game_name):
     os.remove(delete_path)
     return redirect(
         url_for('app.details', namespace=namespace, name=name, game_name=game_name, deployment_type=deployment_type))
+
+
+@bp.route('/plugin/upload/<deployment_type>/<namespace>/<name>/<game_name>', methods=['POST'])
+def upload_plugin(deployment_type, namespace, name, game_name):
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part', 'error')
+        return redirect(url_for('app.details', namespace=namespace, name=name, game_name=game_name,
+                                deployment_type=deployment_type))
+    file = request.files['file']
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if file.filename == '':
+        flash('No selected file', 'error')
+        return redirect(url_for('app.details', namespace=namespace, name=name, game_name=game_name,
+                                deployment_type=deployment_type))
+    if file:
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(utilities.plugins.get_path_to_plugins(game_name, name, namespace), filename))
+        flash(f'{file.filename} has been uploaded')
+        app.logger.info(f'{file.filename} has been uploaded')
+        return redirect(url_for('app.details', namespace=namespace, name=name, game_name=game_name,
+                                deployment_type=deployment_type))
