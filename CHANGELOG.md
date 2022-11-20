@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.4.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.4.0) (2022-11-20)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.3.0...v1.4.0)
+
+**Implemented enhancements:**
+
+- feat: adding the ability to upload plugins [\#16](https://github.com/chrisjohnson00/k8s-game-manager/pull/16) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.3.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.3.0) (2022-11-19)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.2.0...v1.3.0)
