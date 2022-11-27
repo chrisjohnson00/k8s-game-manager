@@ -1,4 +1,5 @@
 import services.k8s
+import services.game_manager
 import utilities.relative_time
 import utilities.plugins
 import os
@@ -49,7 +50,7 @@ def power_cycle(cycle_type, deployment_type, namespace, name):
 
 @bp.route('/details/<deployment_type>/<namespace>/<name>')
 def details(deployment_type, namespace, name):
-    game = services.k8s.get_game_details(namespace=namespace, name=name, deployment_type=deployment_type)
+    game = services.game_manager.get_game_details(namespace=namespace, name=name, deployment_type=deployment_type)
     pod = None
     pod_running_since = None
     if game['pod_name']:
