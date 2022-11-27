@@ -3,7 +3,7 @@ from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1Stateful
     V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec, \
     V1PodTemplateSpec, V1PodSpec, V1Container, V1EnvVar  # noqa
 from kubernetes.client.rest import ApiException
-from kubernetes.client.api.core_v1_api import CoreV1Api
+from kubernetes.client.api.core_v1_api import CoreV1Api  # noqa
 import datetime
 
 
