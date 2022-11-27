@@ -1,6 +1,6 @@
 from kubernetes import client
 from kubernetes.client.models import V1ObjectMeta, V1StatefulSetSpec, V1DeploymentSpec, V1Pod, V1StatefulSet, \
-    V1Deployment
+    V1Deployment  # noqa
 import services.k8s
 import utilities.plugins
 

@@ -1,5 +1,5 @@
 import services.k8s
-from kubernetes.client.models import V1EnvVar
+from kubernetes.client.models import V1EnvVar  # noqa
 
 
 def get_path_to_plugins(game_name, name, namespace):
