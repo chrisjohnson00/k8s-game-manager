@@ -32,16 +32,44 @@
     </tbody>
 </table>
 
-{% if game.pod_name %}
 <div class="accordion" id="accordionExample">
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
+        <h2 class="accordion-header" id="headingConfiguration">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    data-bs-target="#collapseConfiguration" aria-expanded="false"
+                    aria-controls="collapseConfiguratione">
+                Configuration
+            </button>
+        </h2>
+        <div id="collapseConfiguration" class="accordion-collapse collapse" aria-labelledby="headingConfiguration"
+             data-bs-parent="#accordionExample">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for env_var in game.env_vars %}
+                <tr>
+                    <th scope="row">{{ env_var.name }}</th>
+                    <td>{{ env_var.value }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if game.pod_name %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingLogs">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseLogs" aria-expanded="false" aria-controls="collapseLogs">
                 Logs
             </button>
         </h2>
-        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+        <div id="collapseLogs" class="accordion-collapse collapse" aria-labelledby="headingLogs"
              data-bs-parent="#accordionExample">
             <div class="accordion-body">
         <textarea id="pod_logs" rows="29" cols="100"
@@ -50,15 +78,15 @@
             </div>
         </div>
     </div>
-    {% if game.game_name in games_which_support_plugins %}
+    {% if game.game_name in games_which_support_plugins and game.plugins_enabled %}
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwo">
+        <h2 class="accordion-header" id="headingPlugins">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    data-bs-target="#collapsePlugins" aria-expanded="false" aria-controls="collapsePlugins">
                 Plugins
             </button>
         </h2>
-        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+        <div id="collapsePlugins" class="accordion-collapse collapse" aria-labelledby="headingPlugins"
              data-bs-parent="#accordionExample">
             <div class="accordion-body" id="plugin_list">
                 <div class="spinner-border" role="status">
@@ -68,8 +96,9 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 </div>
-{% endif %}
+
 {% endblock %}
 {% block footer_content %}
 {% if game.pod_name %}
@@ -130,6 +159,9 @@ function getPluginList()
 getPluginList()
 
 {% endif %}
+
+
+
 </script>
 {% endif %}
 {% endblock %}

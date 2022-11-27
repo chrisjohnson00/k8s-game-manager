@@ -1,8 +1,9 @@
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1StatefulSetSpec, V1DeploymentList, \
-    V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec
+    V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec, \
+    V1PodTemplateSpec, V1PodSpec, V1Container, V1EnvVar  # noqa
 from kubernetes.client.rest import ApiException
-from kubernetes.client.api.core_v1_api import CoreV1Api
+from kubernetes.client.api.core_v1_api import CoreV1Api  # noqa
 import datetime
 
 
@@ -86,38 +87,6 @@ def scale(namespace, deployment_type, name, new_replica_count):
         raise ValueError(f'{deployment_type} is not a valid deployment type')
 
 
-def get_game_details(namespace, name, deployment_type):
-    pod_name = None
-    if deployment_type == "statefulset":
-        apps_client = client.AppsV1Api()
-        sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)  # type: V1StatefulSet
-        metadata = sts.metadata  # type: V1ObjectMeta
-        spec = sts.spec  # type: V1StatefulSetSpec
-        replicas = spec.replicas
-        if replicas > 0:
-            pod_name = f'{metadata.name}-0'
-        game_name = get_annotation_by_name("game", sts)
-        return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
-                'pod_name': pod_name, 'game_name': game_name}
-    elif deployment_type == "deployment":
-        apps_client = client.AppsV1Api()
-        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)  # type: V1Deployment
-        metadata = deployment.metadata  # type: V1ObjectMeta
-        spec = deployment.spec  # type: V1DeploymentSpec
-        replicas = spec.replicas
-        if replicas > 0:
-            pods = get_pods_matching_label(namespace=namespace, label=f"app={name}")
-            # It seems that right after a restart there could be a time where this returns no pods
-            if len(pods.items) > 0:
-                pod = pods.items.pop()  # type: V1Pod
-                pod_name = pod.metadata.name
-        game_name = get_annotation_by_name("game", deployment)
-        return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
-                'pod_name': pod_name, 'game_name': game_name}
-    else:
-        raise ValueError(f'{deployment_type} is not a valid deployment type')
-
-
 def get_annotation_by_name(name, thing):
     metadata = thing.metadata  # type: V1ObjectMeta
     annotations = metadata.annotations  # type: dict
@@ -159,3 +128,30 @@ def get_pvc_volume(namespace, name):
     pvc = get_pvc(namespace=namespace, name=name)  # type: V1PersistentVolumeClaim
     metadata = pvc.spec  # type: V1PersistentVolumeClaimSpec
     return metadata.volume_name
+
+
+def get_env_vars(namespace, name, deployment_type):
+    if deployment_type == "statefulset":
+        apps_client = client.AppsV1Api()
+        sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)  # type: V1StatefulSet
+        spec = sts.spec  # type: V1StatefulSetSpec
+        template = spec.template  # type: V1PodTemplateSpec
+        template_spec = template.spec  # type: V1PodSpec
+        containers = template_spec.containers  # type: list[V1Container]
+        # so far, all sts/deployments expect a single container per pod.
+        container = containers[0]  # type: V1Container
+        env_vars = container.env  # type: list[V1EnvVar]
+    elif deployment_type == "deployment":
+        apps_client = client.AppsV1Api()
+        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)  # type: V1Deployment
+        spec = deployment.spec  # type: V1DeploymentSpec
+        template = spec.template  # type: V1PodTemplateSpec
+        template_spec = template.spec  # type: V1PodSpec
+        containers = template_spec.containers  # type: list[V1Container]
+        # so far, all sts/deployments expect a single container per pod.
+        container = containers[0]  # type: V1Container
+        env_vars = container.env  # type: list[V1EnvVar]
+    else:
+        raise ValueError(f'{deployment_type} is not a valid deployment type')
+    print(env_vars)
+    return env_vars
