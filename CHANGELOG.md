@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.5.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.5.0) (2022-11-27)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.4.0...v1.5.0)
+
+**Implemented enhancements:**
+
+- feat: adding the ability to list the game configuration [\#19](https://github.com/chrisjohnson00/k8s-game-manager/pull/19) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.4.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.4.0) (2022-11-20)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.3.0...v1.4.0)
