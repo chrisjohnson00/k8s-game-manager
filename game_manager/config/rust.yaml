@@ -1,4 +1,18 @@
 name: Rust
+plugins:
+  # Determines if the game is capable of running plugins/mods
+  capable: true
+  # Where in the PVC to find plugin files
+  path: oxide/plugins
+  # How to determine if an instance of the game has plugins enabled
+  enabledBy:
+    name: RUST_OXIDE_ENABLED
+    value: "1"
+  # Some plugins have config files, this is how we enable config editing, and define file details
+  configs:
+    enabled: true
+    path: oxide/config
+    type: json
 env:
   - name: RUST_SERVER_STARTUP_ARGUMENTS
     default: "-batchmode -load -nographics +server.secure 1"

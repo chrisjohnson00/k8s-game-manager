@@ -3,6 +3,7 @@ from kubernetes.client.models import V1ObjectMeta, V1StatefulSetSpec, V1Deployme
     V1Deployment  # noqa
 import services.k8s
 import utilities.plugins
+from utilities.config import ConfigFileReader
 
 
 def get_game_details(namespace, name, deployment_type):
@@ -33,8 +34,9 @@ def get_game_details(namespace, name, deployment_type):
         raise ValueError(f'{deployment_type} is not a valid deployment type')
 
     env_vars = services.k8s.get_env_vars(namespace=namespace, name=name, deployment_type=deployment_type)
+    game_config = ConfigFileReader(f'{game_name}.yaml'.lower()).get_config()
     plugins_enabled = utilities.plugins.supports_plugins(namespace=namespace, name=name,
-                                                         deployment_type=deployment_type, game_name=game_name)
+                                                         deployment_type=deployment_type, game_config=game_config)
 
     return {'name': metadata.name, 'deployment_type': deployment_type, 'namespace': namespace, 'replicas': replicas,
             'pod_name': pod_name, 'game_name': game_name, 'env_vars': env_vars, 'plugins_enabled': plugins_enabled}
