@@ -1,0 +1,16 @@
+name: Minecraft
+plugins:
+  # Determines if the game is capable of running plugins/mods
+  capable: false
+  # Where in the PVC to find plugin files
+  path: ~
+  # How to determine if an instance of the game has plugins enabled
+  enabledBy:
+    name: ~
+    value: ~
+  # Some plugins have config files, this is how we enable config editing, and define file details
+  configs:
+    enabled: false
+    path: ~
+    type: ~
+env: []

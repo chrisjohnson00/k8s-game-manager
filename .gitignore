@@ -1,2 +1,3 @@
 venv
 .idea
+game_manager/static/vanilla-jsoneditor  # added at built time

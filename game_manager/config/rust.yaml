@@ -1,0 +1,82 @@
+name: Rust
+plugins:
+  # Determines if the game is capable of running plugins/mods
+  capable: true
+  # Where in the PVC to find plugin files
+  path: oxide/plugins
+  # How to determine if an instance of the game has plugins enabled
+  enabledBy:
+    name: RUST_OXIDE_ENABLED
+    value: "1"
+  # Some plugins have config files, this is how we enable config editing, and define file details
+  configs:
+    enabled: true
+    path: oxide/config
+    type: json
+env:
+  - name: RUST_SERVER_STARTUP_ARGUMENTS
+    default: "-batchmode -load -nographics +server.secure 1"
+    description: Server startup arguments
+  - name: RUST_SERVER_IDENTITY
+    default: "docker"
+    description: Mainly used for the name of the save directory
+  - name: RUST_SERVER_PORT
+    default: ""
+    description: Rust server port 28015 if left blank or numeric value
+  - name: RUST_SERVER_SEED
+    default: "12345"
+    description: The server map seed, must be an integer
+  - name: RUST_SERVER_WORLDSIZE
+    default: "3500"
+    description: The map size, must be an integer
+  - name: RUST_SERVER_NAME
+    default: "Rust Server [DOCKER]"
+    description: The publicly visible server name
+  - name: RUST_SERVER_MAXPLAYERS
+    default: "500"
+    description: Maximum players on the server, must be an integer
+  - name: RUST_SERVER_DESCRIPTION
+    default: "This is a Rust server running inside a Docker container!"
+    description: The publicly visible server description
+  - name: RUST_SERVER_URL
+    default: "https://hub.docker.com/r/didstopia/rust-server/"
+    description: The publicly visible server website
+  - name: RUST_SERVER_BANNER_URL
+    default: ""
+    description: The publicly visible server banner image URL
+  - name: RUST_SERVER_SAVE_INTERVAL
+    default: "600"
+    description: Amount of seconds between automatic saves.
+  - name: RUST_RCON_WEB
+    default: "1"
+    description: Set to 1 or 0 to enable or disable the web-based RCON server
+  - name: RUST_RCON_PORT
+    default: "28016"
+    description: RCON server port
+  - name: RUST_RCON_PASSWORD
+    default: "docker"
+    description: RCON server password, please change this!
+  - name: RUST_APP_PORT
+    default: "28082"
+    description: Rust+ companion app port
+  - name: RUST_UPDATE_CHECKING
+    default: "0"
+    description: Set to 1 to enable fully automatic update checking, notifying players and restarting to install updates
+  - name: RUST_UPDATE_BRANCH
+    default: "public"
+    description: Set to match the branch that you want to use for updating, ie. "prerelease" or "public", but do not specify arguments like "-beta"
+  - name: RUST_START_MODE
+    default: "0"
+    description: Determines if the server should update and then start (0), only update (1) or only start (2)
+  - name: RUST_OXIDE_ENABLED
+    default: "0"
+    description: Set to 1 to automatically install the latest version of Oxide
+  - name: RUST_OXIDE_UPDATE_ON_BOOT
+    default: "1"
+    description: Set to 0 to disable automatic update of Oxide on boot
+  - name: RUST_RCON_SECURE_WEBSOCKET
+    default: "0"
+    description: Set to 1 to enable secure websocket connections to the RCON web interface
+  - name: RUST_HEARTBEAT
+    default: "0"
+    description: Set to 1 to enable the heartbeat service which will forcibly quit the server if it becomes unresponsive to queries

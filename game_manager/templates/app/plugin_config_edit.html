@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Edit {{ file }}{% endblock %}
+{% block head %}
+<script type="importmap">
+{
+  "imports":{
+    "vanilla-jsoneditor":"/static/vanilla-jsoneditor/index.js"
+  }
+}
+</script>
+{% endblock %}
+{% block header %}
+<h2>Edit {{ file }} <small class="text-muted">(<a
+        href="{{ url_for('app.details',namespace=namespace, deployment_type=deployment_type, name=name) }}">{{
+    name }}</a>)</small></h2>
+{% endblock %}
+
+{% block content %}
+<div id="jsoneditor"></div>
+{% endblock %}
+{% block footer_content %}
+<script>
+function makeHttpObject()
+{
+    try {return new XMLHttpRequest();}
+    catch (error) {}
+    try {return new ActiveXObject("Msxml2.XMLHTTP");}
+    catch (error) {}
+    try {return new ActiveXObject("Microsoft.XMLHTTP");}
+    catch (error) {}
+    throw new Error("Could not create HTTP request object.");
+}
+
+function putJsonContent(content)
+{
+    var request = makeHttpObject();
+    request.open("PUT", "{{ url_for('app.update_plugin_config_file',namespace=namespace, name=name, game_name=game_name, file_name=file,) }}", true);
+    request.setRequestHeader('Content-type', 'application/json');
+    request.send(JSON.stringify(content, null, 2));
+}
+</script>
+<script type="module">
+    import { JSONEditor } from 'vanilla-jsoneditor'
+
+    let content = {
+    json: {{ file_content | tojson }}
+    }
+
+    const editor = new JSONEditor({
+        target: document.getElementById('jsoneditor'),
+        props: {
+          content,
+          onChange: (updatedContent, previousContent, { contentErrors, patchResult }) => {
+            // content is an object { json: JSONValue } | { text: string }
+            console.log('onChange', { updatedContent, previousContent, contentErrors, patchResult })
+            content = updatedContent
+            putJsonContent(content)
+          }
+        }
+    })
+
+</script>
+{% endblock %}

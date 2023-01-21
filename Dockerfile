@@ -1,4 +1,8 @@
-FROM python:3.11.0-slim
+FROM node:19.4.0-slim as npmbuild
+WORKDIR /usr/src/app
+RUN npm install vanilla-jsoneditor
+
+FROM python:3.11.1-slim as appbuild
 
 WORKDIR /usr/src/app
 EXPOSE 5000
@@ -6,6 +10,8 @@ EXPOSE 5000
 COPY requirements.txt ./
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
+
+COPY --from=npmbuild /usr/src/app/node_modules ./game_manager/static
 
 COPY . .
 

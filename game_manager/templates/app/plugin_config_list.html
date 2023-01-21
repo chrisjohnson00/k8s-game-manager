@@ -1,0 +1,21 @@
+<div class="pt-4">
+    <h3>Plugin Configuration Files</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">File Name</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in files %}
+        <tr>
+            <th scope="row">{{ file }}</th>
+            <td>
+                <a href="{{ url_for('app.edit_plugin_config_file', namespace=namespace, name=name, game_name=game_name, file_name=file, deployment_type=deployment_type) }}"><i
+                        class="fa-regular fa-pen-to-square"></i></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
