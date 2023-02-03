@@ -1,4 +1,4 @@
-FROM node:19.4.0-slim as npmbuild
+FROM node:19.6.0-slim as npmbuild
 WORKDIR /usr/src/app
 RUN npm install vanilla-jsoneditor
 
