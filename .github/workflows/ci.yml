@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-22.04'
     name: 'Python Lint'
     steps:
       - uses: 'actions/checkout@v3'
@@ -23,9 +23,9 @@ jobs:
         run: |
           python -m flake8 --exclude venv --max-line-length 120
   container_build:
-    needs: ['lint']
+    needs: ['lint', 'test']
     name: 'Build and Push Docker Container'
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-22.04'
     steps:
       - uses: 'actions/checkout@v3'
       - name: 'Get calculated next version based on commit history'
@@ -99,7 +99,7 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
   yaml_lint:
     name: 'Yaml Lint'
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-22.04'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
@@ -110,3 +110,23 @@ jobs:
           yamllint_config_datapath: '{"extends":"default","rules":{"line-length":{"max":360,"level":"warning"},"truthy":{"check-keys":false},"document-start":{"present":false}}}'
         env:
           GITHUB_ACCESS_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  test:
+    name: 'Test'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - uses: 'actions/checkout@v3'
+      - uses: 'actions/setup-python@v4'
+        with:
+          python-version: '3.11'
+      - name: 'Install dependencies'
+        run: |
+          echo "Installing CI requirements"
+          pip install --upgrade --user pip pytest coverage pyfakefs
+          echo "Installing project requirements"
+          pip install -r requirements.txt
+      - name: 'Run tests'
+        run: 'python -m coverage run --branch -m pytest'
+      - name: 'Display coverage report'
+        run: |
+          python -m coverage report --fail-under=80 \
+          --omit="*/.local/*","*/tests/test_*" -m

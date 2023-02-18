@@ -153,5 +153,25 @@ def get_env_vars(namespace, name, deployment_type):
         env_vars = container.env  # type: list[V1EnvVar]
     else:
         raise ValueError(f'{deployment_type} is not a valid deployment type')
-    print(env_vars)
     return env_vars
+
+
+def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
+    # Create the Kubernetes client API
+    api = client.AppsV1Api()
+
+    # Get the current StatefulSet object
+    statefulset = api.read_namespaced_stateful_set(statefulset_name, namespace)
+
+    # Get the current container spec
+    container = statefulset.spec.template.spec.containers[0]
+
+    # Find the environment variable by key, and update its value
+    env_var = next((env for env in container.env if env.name == env_key), None)
+    if env_var is not None:
+        env_var.value = env_value
+    else:
+        container.env.append(client.V1EnvVar(name=env_key, value=env_value))
+
+    # Update the StatefulSet with the modified container spec
+    api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)

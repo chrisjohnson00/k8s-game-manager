@@ -54,7 +54,9 @@
                 {% for env_var in game.env_vars %}
                 <tr>
                     <th scope="row">{{ env_var.name }}</th>
-                    <td>{{ env_var.value }}</td>
+                    <td>
+                        <div id="{{ env_var.name }}" class="editable" contenteditable="true">{{ env_var.value }}</div>
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -193,9 +195,57 @@ function getPluginConfigList()
 getPluginConfigList()
 
 {% endif %}
-
-
-
 </script>
 {% endif %}
+<script>
+
+// Define the inline editing function
+function inlineEdit(editable) {
+  // Create an input element to replace the container element's contents
+  const input = document.createElement('input');
+  input.value = editable.textContent;
+
+  // Replace the container element with the input element
+  editable.replaceWith(input);
+
+  // Add a blur event listener to the input element
+  input.addEventListener('blur', function() {
+    // Update the container element's contents with the edited text
+    const editedText = input.value;
+    const newEditable = document.createElement('div');
+    newEditable.id = editable.id;
+    newEditable.className = 'editable';
+    newEditable.setAttribute('contenteditable', 'true'); // Add contenteditable attribute
+    newEditable.textContent = editedText;
+    input.replaceWith(newEditable);
+
+    // Add a click event listener to the new "editable" element
+    newEditable.addEventListener('click', function() {
+      // Call the inline editing function again
+      inlineEdit(newEditable);
+    });
+
+    // Make the new "editable" element editable again
+    newEditable.setAttribute('contenteditable', 'true');
+
+    // Send an HTTP POST request with the updated content and additional parameters
+    const xhr = new XMLHttpRequest();
+    const url = '/config';
+    const params = `namespace={{ game.namespace }}&name={{ game.name }}&${editable.id}=${encodeURIComponent(editedText)}`;
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(params);
+  });
+}
+
+// Get all elements with the "editable" class
+const editables = document.querySelectorAll('.editable');
+
+// Add a click event listener to each "editable" element
+editables.forEach(function(editable) {
+  editable.addEventListener('click', function() {
+    inlineEdit(editable);
+  });
+});
+</script>
 {% endblock %}
