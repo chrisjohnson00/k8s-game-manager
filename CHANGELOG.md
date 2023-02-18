@@ -1,12 +1,13 @@
 # Changelog
 
-## [Unreleased](https://github.com/chrisjohnson00/k8s-game-manager/tree/HEAD)
+## [v1.7.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.7.0) (2023-02-18)
 
-[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.6.0...HEAD)
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.6.0...v1.7.0)
 
 **Implemented enhancements:**
 
 - feat: ability to edit json mod files [\#28](https://github.com/chrisjohnson00/k8s-game-manager/issues/28)
+- feat: added the ability to edit env vars for games [\#53](https://github.com/chrisjohnson00/k8s-game-manager/pull/53) ([chrisjohnson00](https://github.com/chrisjohnson00))
 
 ## [v1.6.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.6.0) (2023-01-21)
 
