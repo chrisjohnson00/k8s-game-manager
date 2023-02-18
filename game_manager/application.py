@@ -2,6 +2,7 @@ import services.k8s
 import services.game_manager
 import utilities.relative_time
 import utilities.plugins
+import utilities.request
 from utilities.config import ConfigFileReader
 import utilities.file_name_security
 import os
@@ -163,4 +164,16 @@ def update_plugin_config_file(namespace, name, game_name):
     app.logger.debug(request.json['json'])
     file = open(config_file_path, mode='w')
     file.write(request.json['json'])
+    return jsonify(success=True)
+
+
+@bp.route('/config', methods=['POST'])
+def update_environment_variable():
+    namespace = request.form.get('namespace')
+    name = request.form.get('name')
+    extra_parameters = utilities.request.get_unknown_params(['namespace', 'name'], request)
+    app.logger.debug(f'Updating env var -- Namespace: {namespace}, Name: {name}, Env Var Name: {extra_parameters}')
+    keys = [d['key'] for d in extra_parameters]
+    values = [d['value'] for d in extra_parameters]
+    services.k8s.update_statefulset_env(namespace, name, env_key=keys[0], env_value=values[0])
     return jsonify(success=True)
