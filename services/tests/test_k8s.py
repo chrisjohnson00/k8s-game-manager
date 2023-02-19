@@ -1,7 +1,7 @@
 from unittest import TestCase, mock
 from kubernetes import client
 from kubernetes.client.models import V1Deployment, V1ObjectMeta, V1DeploymentList, V1DeploymentSpec, V1LabelSelector, \
-    V1PodTemplateSpec, V1StatefulSetList, V1StatefulSet, V1StatefulSetSpec
+    V1PodTemplateSpec, V1StatefulSetList, V1StatefulSet, V1StatefulSetSpec, V1Container, V1EnvVar, V1PodSpec
 import services.k8s
 
 
@@ -66,3 +66,39 @@ class TestK8sService(TestCase):
              "replicas": 1},
             {"name": "test-deployment-2", "deployment_type": "deployment", "namespace": "test-namespace", "replicas": 3}
         ]
+
+    @mock.patch.object(client, "AppsV1Api")
+    def test_create_deployment(self, mock_api):
+        env_vars = {"key1": "value1", "key2": "value2"}
+        namespace = "test-namespace"
+        deployment_name = "test-deployment"
+        container_image = "nginx"
+
+        mock_api_instance = mock.MagicMock()
+        mock_api_instance.create_namespaced_deployment.return_value = mock.Mock(V1Deployment)
+        mock_api.return_value = mock_api_instance
+
+        response = services.k8s.create_deployment(env_vars, namespace, deployment_name, container_image)
+
+        # Verify that the Kubernetes API client was called with the correct parameters
+        mock_api_instance.create_namespaced_deployment.assert_called_once()
+
+    def test_get_env_vars_from_deployment(self):
+        deployment = V1Deployment()
+        container = V1Container(name="test-container")
+        env1 = V1EnvVar(name="VAR1", value="value1")
+        env2 = V1EnvVar(name="VAR2", value="value2")
+        container.env = [env1, env2]
+        deployment.spec = client.V1DeploymentSpec(
+            template=V1PodTemplateSpec(
+                spec=V1PodSpec(
+                    containers=[container]
+                )
+            ),
+            selector=mock.Mock(V1LabelSelector())
+        )
+
+        env_vars = services.k8s.get_env_vars_from_deployment(deployment)
+        expected_env_vars = [("VAR1", "value1"), ("VAR2", "value2")]
+
+        self.assertListEqual(env_vars, expected_env_vars)

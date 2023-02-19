@@ -1,7 +1,7 @@
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1StatefulSetSpec, V1DeploymentList, \
     V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec, \
-    V1PodTemplateSpec, V1PodSpec, V1Container, V1EnvVar  # noqa
+    V1PodTemplateSpec, V1PodSpec, V1Container, V1EnvVar, V1LabelSelector, V1DeploymentStrategy  # noqa
 from kubernetes.client.rest import ApiException
 from kubernetes.client.api.core_v1_api import CoreV1Api  # noqa
 import datetime
@@ -192,3 +192,50 @@ def get_node_port(namespace, service_name):
     for port in svc.spec.ports:
         if port.name == "gameport":
             return port.node_port
+
+
+def create_deployment(env_vars, namespace, deployment_name, container_image):
+    # create a Kubernetes API client object
+    api = client.AppsV1Api()
+
+    # create the deployment object
+    deployment = V1Deployment(
+        metadata=V1ObjectMeta(
+            name=deployment_name
+        ),
+        spec=V1DeploymentSpec(
+            strategy=V1DeploymentStrategy(type="Recreate"),
+            replicas=1,
+            selector=V1LabelSelector(
+                match_labels={"app": deployment_name}
+            ),
+            template=V1PodTemplateSpec(
+                metadata=V1ObjectMeta(
+                    labels={"app": deployment_name}
+                ),
+                spec=V1PodSpec(
+                    containers=[
+                        V1Container(
+                            name=deployment_name,
+                            image=container_image,
+                            env=[V1EnvVar(name=k, value=v) for k, v in env_vars.items()]
+                        )
+                    ]
+                )
+            )
+        )
+    )
+
+    # create the deployment in the specified namespace
+    return api.create_namespaced_deployment(namespace=namespace, body=deployment)
+
+
+def get_env_vars_from_deployment(deployment):
+    containers = deployment.spec.template.spec.containers
+    env_vars = []
+
+    for container in containers:
+        for env in container.env:
+            env_vars.append((env.name, env.value))
+
+    return env_vars
