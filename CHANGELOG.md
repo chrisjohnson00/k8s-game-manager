@@ -1,12 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/chrisjohnson00/k8s-game-manager/tree/HEAD)
+## [v1.8.1](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.8.1) (2023-02-19)
 
-[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.8.0...HEAD)
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.8.0...v1.8.1)
 
 **Implemented enhancements:**
 
 - feat: show service details like port number [\#29](https://github.com/chrisjohnson00/k8s-game-manager/issues/29)
+
+**Fixed bugs:**
+
+- fix: "i" wraps on larger env var names [\#56](https://github.com/chrisjohnson00/k8s-game-manager/pull/56) ([chrisjohnson00](https://github.com/chrisjohnson00))
 
 ## [v1.8.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.8.0) (2023-02-19)
 
