@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.7.1](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.7.1) (2023-02-19)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.7.0...v1.7.1)
+
+**Implemented enhancements:**
+
+- feat: ability to edit env vars [\#27](https://github.com/chrisjohnson00/k8s-game-manager/issues/27)
+
+**Merged pull requests:**
+
+- style: adding some style for UX [\#54](https://github.com/chrisjohnson00/k8s-game-manager/pull/54) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.7.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.7.0) (2023-02-18)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.6.0...v1.7.0)
