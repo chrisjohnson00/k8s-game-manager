@@ -166,12 +166,20 @@ def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
     # Get the current container spec
     container = statefulset.spec.template.spec.containers[0]
 
+    change_needed = False
+
+    env_value = env_value.strip()
+
     # Find the environment variable by key, and update its value
     env_var = next((env for env in container.env if env.name == env_key), None)
     if env_var is not None:
-        env_var.value = env_value
+        if env_var.value != env_value:
+            env_var.value = env_value
+            change_needed = True
     else:
         container.env.append(client.V1EnvVar(name=env_key, value=env_value))
+        change_needed = True
 
     # Update the StatefulSet with the modified container spec
-    api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)
+    if change_needed:
+        api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)

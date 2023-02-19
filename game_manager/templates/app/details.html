@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block header %}
 <h2>{% block title %}{{ game.name }} ({{ game.game_name.title() }}){% endblock %}</h2>
 {% endblock %}
@@ -43,20 +42,30 @@
         </h2>
         <div id="collapseConfiguration" class="accordion-collapse collapse" aria-labelledby="headingConfiguration"
              data-bs-parent="#accordionExample">
-            <table class="table table-striped">
+            <table class="table table-striped table-fixed">
+                <colgroup>
+                    <col style="width:25%">
+                    <col style="width:70%">
+                    <col style="width:5%">
+                </colgroup>
                 <thead>
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Value</th>
+                    <th scope="col">Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for env_var in game.env_vars %}
+                {% set env_data = game_config.env | selectattr('name', 'eq', env_var.name) | first %}
                 <tr>
-                    <th scope="row">{{ env_var.name }}</th>
+                    <th scope="row">{{ env_var.name }} <i class="fa-solid fa-circle-info" data-toggle="tooltip"
+                                                          data-placement="top" title="{{ env_data.description }}"></i></th>
                     <td>
-                        <div id="{{ env_var.name }}" class="editable" contenteditable="true">{{ env_var.value }}</div>
+                        <div id="{{ env_var.name }}">{{ env_var.value }}</div>
                     </td>
+                    <td><a href="#"><i id="edit-{{ env_var.name }}"
+                                       class="fa-regular fa-pen-to-square edit-text-to-input"></i></a></td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -195,6 +204,8 @@ function getPluginConfigList()
 getPluginConfigList()
 
 {% endif %}
+
+
 </script>
 {% endif %}
 <script>
@@ -214,8 +225,6 @@ function inlineEdit(editable) {
     const editedText = input.value;
     const newEditable = document.createElement('div');
     newEditable.id = editable.id;
-    newEditable.className = 'editable';
-    newEditable.setAttribute('contenteditable', 'true'); // Add contenteditable attribute
     newEditable.textContent = editedText;
     input.replaceWith(newEditable);
 
@@ -224,9 +233,6 @@ function inlineEdit(editable) {
       // Call the inline editing function again
       inlineEdit(newEditable);
     });
-
-    // Make the new "editable" element editable again
-    newEditable.setAttribute('contenteditable', 'true');
 
     // Send an HTTP POST request with the updated content and additional parameters
     const xhr = new XMLHttpRequest();
@@ -239,13 +245,23 @@ function inlineEdit(editable) {
 }
 
 // Get all elements with the "editable" class
-const editables = document.querySelectorAll('.editable');
+const editButtons = document.querySelectorAll('.edit-text-to-input');
 
 // Add a click event listener to each "editable" element
-editables.forEach(function(editable) {
-  editable.addEventListener('click', function() {
+editButtons.forEach(function(editButton) {
+  editButton.addEventListener('click', function() {
+    fieldId = editButton.id.replace("edit-","");
+    editable = document.getElementById(fieldId)
     inlineEdit(editable);
   });
+});
+
+// Get all i tags with data-toggle="tooltip"
+var tooltips = document.querySelectorAll('i[data-toggle="tooltip"]');
+
+// Loop through each tooltip and initialize it
+Array.prototype.forEach.call(tooltips, function (tooltip) {
+new bootstrap.Tooltip(tooltip);
 });
 </script>
 {% endblock %}
