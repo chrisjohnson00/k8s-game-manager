@@ -172,8 +172,8 @@ def update_environment_variable():
     namespace = request.form.get('namespace')
     name = request.form.get('name')
     extra_parameters = utilities.request.get_unknown_params(['namespace', 'name'], request)
-    app.logger.debug(f'Updating env var -- Namespace: {namespace}, Name: {name}, Env Var Name: {extra_parameters}')
     keys = [d['key'] for d in extra_parameters]
     values = [d['value'] for d in extra_parameters]
+    app.logger.debug(f'Updating env var -- Namespace: {namespace}, Name: {name}, Env Var {keys[0]}={values[0]}')
     services.k8s.update_statefulset_env(namespace, name, env_key=keys[0], env_value=values[0])
     return jsonify(success=True)
