@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/chrisjohnson00/k8s-game-manager/tree/HEAD)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.8.0...HEAD)
+
+**Implemented enhancements:**
+
+- feat: show service details like port number [\#29](https://github.com/chrisjohnson00/k8s-game-manager/issues/29)
+
+## [v1.8.0](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.8.0) (2023-02-19)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.7.1...v1.8.0)
+
+**Implemented enhancements:**
+
+- feat: add game port display [\#55](https://github.com/chrisjohnson00/k8s-game-manager/pull/55) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.7.1](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.7.1) (2023-02-19)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.7.0...v1.7.1)
