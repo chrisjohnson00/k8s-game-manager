@@ -183,3 +183,12 @@ def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
     # Update the StatefulSet with the modified container spec
     if change_needed:
         api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)
+
+
+def get_node_port(namespace, service_name):
+    api = client.CoreV1Api()
+    svc = api.read_namespaced_service(service_name, namespace)
+
+    for port in svc.spec.ports:
+        if port.name == "gameport":
+            return port.node_port

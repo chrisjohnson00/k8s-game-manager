@@ -60,9 +60,9 @@ def details(deployment_type, namespace, name):
         pod = services.k8s.get_pod_details(namespace=namespace, pod_name=game['pod_name'])
         if pod.status.start_time:
             pod_running_since = utilities.relative_time.relative_time(pod.status.start_time)
-
+    game_port = services.k8s.get_node_port(namespace=namespace, service_name=name)
     return render_template('app/details.html', game=game, pod=pod, pod_running_since=pod_running_since,
-                           game_config=game_config)
+                           game_config=game_config, game_port=game_port)
 
 
 @bp.route('/logs/<namespace>/<name>')

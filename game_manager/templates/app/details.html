@@ -28,6 +28,10 @@
                 class="fa-solid fa-recycle"></i></a></td>
     </tr>
     {% endif %}
+    <tr>
+        <td>Game Port</td>
+        <td>{{ game_port }}</td>
+    </tr>
     </tbody>
 </table>
 
@@ -56,6 +60,7 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% if game_config.env %}
                 {% for env_var in game.env_vars %}
                 {% set env_data = game_config.env | selectattr('name', 'eq', env_var.name) | first %}
                 <tr>
@@ -68,6 +73,7 @@
                                        class="fa-regular fa-pen-to-square edit-text-to-input"></i></a></td>
                 </tr>
                 {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
         </div>
