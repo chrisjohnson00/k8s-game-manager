@@ -78,7 +78,7 @@ class TestK8sService(TestCase):
         mock_api_instance.create_namespaced_deployment.return_value = mock.Mock(V1Deployment)
         mock_api.return_value = mock_api_instance
 
-        response = services.k8s.create_deployment(env_vars, namespace, deployment_name, container_image)
+        services.k8s.create_deployment(env_vars, namespace, deployment_name, container_image)
 
         # Verify that the Kubernetes API client was called with the correct parameters
         mock_api_instance.create_namespaced_deployment.assert_called_once()
