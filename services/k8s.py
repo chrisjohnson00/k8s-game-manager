@@ -1,3 +1,5 @@
+import logging
+
 from kubernetes import client
 from kubernetes.client.models import V1StatefulSetList, V1ObjectMeta, V1StatefulSetSpec, V1DeploymentList, \
     V1DeploymentSpec, V1Pod, V1StatefulSet, V1Deployment, V1PersistentVolumeClaim, V1PersistentVolumeClaimSpec, \
@@ -183,6 +185,8 @@ def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
     # Update the StatefulSet with the modified container spec
     if change_needed:
         api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)
+        logging.info(f'Updated env var {env_key} to {env_value} for {statefulset_name}')
+
 
 
 def get_node_port(namespace, service_name):
