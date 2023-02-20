@@ -188,7 +188,6 @@ def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
         logging.info(f'Updated env var {env_key} to {env_value} for {statefulset_name}')
 
 
-
 def get_node_port(namespace, service_name):
     api = client.CoreV1Api()
     svc = api.read_namespaced_service(service_name, namespace)
