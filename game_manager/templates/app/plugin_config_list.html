@@ -12,7 +12,7 @@
         <tr>
             <th scope="row">{{ file }}</th>
             <td>
-                <a href="{{ url_for('app.edit_plugin_config_file', namespace=namespace, name=name, game_name=game_name, file_name=file, deployment_type=deployment_type) }}"><i
+                <a href="{{ url_for('app.edit_plugin_config_file', namespace=namespace, name=name, game_name=game_name, file_name=file) }}"><i
                         class="fa-regular fa-pen-to-square"></i></a></td>
         </tr>
         {% endfor %}
