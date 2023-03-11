@@ -10,11 +10,11 @@
         <td>Status</td>
         <td>{% if game.pod_name %}
             <a onclick="return confirm('Are you sure you want to stop {{ game.name }}?')"
-               href="{{ url_for('app.power_cycle',cycle_type='off',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+               href="{{ url_for('app.power_cycle',cycle_type='off',namespace=game.namespace, name=game.name) }}"><i
                     class="fa-solid fa-plug-circle-check" style="color: green" title="Click to Stop"></i></a> {{
             pod.status.phase }}
             {% else %}<a
-                    href="{{ url_for('app.power_cycle',cycle_type='on',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                    href="{{ url_for('app.power_cycle',cycle_type='on',namespace=game.namespace, name=game.name) }}"><i
                     class="fa-solid fa-plug-circle-xmark" style="color: red" title="Click to Start"></i></a>
             {%endif%}
         </td>
@@ -24,7 +24,7 @@
         <td>Start Time</td>
         <td><i class="fa-regular fa-clock"></i> {{ pod_running_since }} <a
                 onclick="return confirm('Are you sure you want to restart {{ game.name }}?')"
-                href="{{ url_for('app.restart',namespace=game.namespace, deployment_type=game.deployment_type, name=game.name) }}"><i
+                href="{{ url_for('app.restart',namespace=game.namespace, name=game.name) }}"><i
                 class="fa-solid fa-recycle"></i></a></td>
     </tr>
     {% endif %}
@@ -183,7 +183,7 @@ const interval = setInterval(function() {
 function getPluginList()
 {
     var request = makeHttpObject();
-    request.open("GET", "{{ url_for('app.list_plugins',namespace=game.namespace, name=game.name, game_name=game.game_name, deployment_type=game.deployment_type) }}", true);
+    request.open("GET", "{{ url_for('app.list_plugins',namespace=game.namespace, name=game.name, game_name=game.game_name) }}", true);
     request.send(null);
     request.onreadystatechange = function() {
       if (request.readyState == 4)
@@ -199,7 +199,7 @@ getPluginList()
 function getPluginConfigList()
 {
     var request = makeHttpObject();
-    request.open("GET", "{{ url_for('app.list_plugin_configs',namespace=game.namespace, name=game.name, game_name=game.game_name, deployment_type=game.deployment_type) }}", true);
+    request.open("GET", "{{ url_for('app.list_plugin_configs',namespace=game.namespace, name=game.name, game_name=game.game_name) }}", true);
     request.send(null);
     request.onreadystatechange = function() {
       if (request.readyState == 4)

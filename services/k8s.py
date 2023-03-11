@@ -33,7 +33,7 @@ def get_statefulsets(games, namespaces):
     return games
 
 
-def restart_game_deployment(namespace, deployment_type, name):
+def restart_game_deployment(namespace, name):
     v1_apps = client.AppsV1Api()
     now = datetime.datetime.utcnow()
     now = str(now.isoformat("T") + "Z")
@@ -48,43 +48,25 @@ def restart_game_deployment(namespace, deployment_type, name):
             }
         }
     }
-    if deployment_type == 'statefulset':
-        try:
-            v1_apps.patch_namespaced_stateful_set(name, namespace, body, pretty='true')
-        except ApiException as e:
-            print("Exception when calling AppsV1Api->patch_namespaced_stateful_set: %s\n" % e)
-            raise e
-    elif deployment_type == 'deployment':
-        try:
-            v1_apps.patch_namespaced_deployment(name, namespace, body, pretty='true')
-        except ApiException as e:
-            print("Exception when calling AppsV1Api->patch_namespaced_deployment: %s\n" % e)
-            raise e
-    else:
-        raise ValueError(f'{deployment_type} is not a valid deployment type')
+    try:
+        v1_apps.patch_namespaced_deployment(name, namespace, body, pretty='true')
+    except ApiException as e:
+        print("Exception when calling AppsV1Api->patch_namespaced_deployment: %s\n" % e)
+        raise e
 
 
-def scale(namespace, deployment_type, name, new_replica_count):
+def scale(namespace, name, new_replica_count):
     v1_apps = client.AppsV1Api()
     body = {
         'spec': {
             'replicas': new_replica_count
         }
     }
-    if deployment_type == 'statefulset':
-        try:
-            v1_apps.patch_namespaced_stateful_set(name, namespace, body, pretty='true')
-        except ApiException as e:
-            print("Exception when calling AppsV1Api->patch_namespaced_stateful_set: %s\n" % e)
-            raise e
-    elif deployment_type == 'deployment':
-        try:
-            v1_apps.patch_namespaced_deployment(name, namespace, body, pretty='true')
-        except ApiException as e:
-            print("Exception when calling AppsV1Api->patch_namespaced_deployment: %s\n" % e)
-            raise e
-    else:
-        raise ValueError(f'{deployment_type} is not a valid deployment type')
+    try:
+        v1_apps.patch_namespaced_deployment(name, namespace, body, pretty='true')
+    except ApiException as e:
+        print("Exception when calling AppsV1Api->patch_namespaced_deployment: %s\n" % e)
+        raise e
 
 
 def get_annotation_by_name(name, thing):
@@ -130,41 +112,37 @@ def get_pvc_volume(namespace, name):
     return metadata.volume_name
 
 
-def get_env_vars(namespace, name, deployment_type):
-    if deployment_type == "statefulset":
-        apps_client = client.AppsV1Api()
-        sts = apps_client.read_namespaced_stateful_set(namespace=namespace, name=name)  # type: V1StatefulSet
-        spec = sts.spec  # type: V1StatefulSetSpec
-        template = spec.template  # type: V1PodTemplateSpec
-        template_spec = template.spec  # type: V1PodSpec
-        containers = template_spec.containers  # type: list[V1Container]
-        # so far, all sts/deployments expect a single container per pod.
-        container = containers[0]  # type: V1Container
-        env_vars = container.env  # type: list[V1EnvVar]
-    elif deployment_type == "deployment":
-        apps_client = client.AppsV1Api()
-        deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)  # type: V1Deployment
-        spec = deployment.spec  # type: V1DeploymentSpec
-        template = spec.template  # type: V1PodTemplateSpec
-        template_spec = template.spec  # type: V1PodSpec
-        containers = template_spec.containers  # type: list[V1Container]
-        # so far, all sts/deployments expect a single container per pod.
-        container = containers[0]  # type: V1Container
-        env_vars = container.env  # type: list[V1EnvVar]
-    else:
-        raise ValueError(f'{deployment_type} is not a valid deployment type')
+def get_env_vars(namespace, name):
+    apps_client = client.AppsV1Api()
+    deployment = apps_client.read_namespaced_deployment(namespace=namespace, name=name)  # type: V1Deployment
+    spec = deployment.spec  # type: V1DeploymentSpec
+    template = spec.template  # type: V1PodTemplateSpec
+    template_spec = template.spec  # type: V1PodSpec
+    containers = template_spec.containers  # type: list[V1Container]
+    # so far, all sts/deployments expect a single container per pod.
+    container = containers[0]  # type: V1Container
+    env_vars = container.env  # type: list[V1EnvVar]
     return env_vars
 
 
-def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
+def get_node_port(namespace, service_name):
+    api = client.CoreV1Api()
+    svc = api.read_namespaced_service(service_name, namespace)
+
+    for port in svc.spec.ports:
+        if port.name == "gameport":
+            return port.node_port
+
+
+def update_env(namespace, deployment_name, env_key, env_value):
     # Create the Kubernetes client API
     api = client.AppsV1Api()
 
     # Get the current StatefulSet object
-    statefulset = api.read_namespaced_stateful_set(statefulset_name, namespace)
+    deployment = api.read_namespaced_deployment(deployment_name, namespace)
 
     # Get the current container spec
-    container = statefulset.spec.template.spec.containers[0]
+    container = deployment.spec.template.spec.containers[0]
 
     change_needed = False
 
@@ -180,15 +158,6 @@ def update_statefulset_env(namespace, statefulset_name, env_key, env_value):
         container.env.append(client.V1EnvVar(name=env_key, value=env_value))
         change_needed = True
 
-    # Update the StatefulSet with the modified container spec
+    # Update the deployment with the modified container spec
     if change_needed:
-        api.patch_namespaced_stateful_set(statefulset_name, namespace, statefulset)
-
-
-def get_node_port(namespace, service_name):
-    api = client.CoreV1Api()
-    svc = api.read_namespaced_service(service_name, namespace)
-
-    for port in svc.spec.ports:
-        if port.name == "gameport":
-            return port.node_port
+        api.patch_namespaced_deployment(deployment_name, namespace, deployment)

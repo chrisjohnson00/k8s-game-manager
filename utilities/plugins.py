@@ -21,9 +21,8 @@ def get_path_to_plugin_configs(name, namespace, game_config):
     return full_path
 
 
-def supports_plugins(namespace, name, deployment_type, game_config):
-    env_vars = services.k8s.get_env_vars(namespace=namespace, name=name,
-                                         deployment_type=deployment_type)  # type: list[V1EnvVar]
+def supports_plugins(namespace, name, game_config):
+    env_vars = services.k8s.get_env_vars(namespace=namespace, name=name)  # type: list[V1EnvVar]
     enabled_by_name = game_config['plugins']['enabledBy']['name']
     enabled_by_value = game_config['plugins']['enabledBy']['value']
     for v in env_vars:
