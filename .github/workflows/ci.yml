@@ -97,6 +97,8 @@ jobs:
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
+          build-args: |
+            VERSION=${{ steps.prep.outputs.version }}
   yaml_lint:
     name: 'Yaml Lint'
     runs-on: 'ubuntu-22.04'

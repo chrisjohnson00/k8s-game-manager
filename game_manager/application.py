@@ -5,6 +5,7 @@ import utilities.plugins
 import utilities.request
 from utilities.config import ConfigFileReader
 import utilities.file_name_security
+from utilities.env_config import get_config_with_default
 import os
 from flask import (
     Blueprint, render_template, redirect, url_for, flash, request, current_app as app, jsonify
@@ -32,7 +33,8 @@ def restart(namespace, name):
 
 @bp.route('/health')
 def health():
-    return render_template('app/health.html')
+    version = get_config_with_default('VERSION', 'Before 2.0')
+    return render_template('app/health.html', version=version)
 
 
 @bp.route('/power/<cycle_type>/<namespace>/<name>')

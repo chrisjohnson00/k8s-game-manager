@@ -15,4 +15,7 @@ COPY --from=npmbuild /usr/src/app/node_modules ./game_manager/static
 
 COPY . .
 
+ARG VERSION=unset
+ENV VERSION=$VERSION
+
 CMD gunicorn --log-file=- --workers=2 --threads=4 --worker-class=gthread --worker-tmp-dir /dev/shm --bind 0.0.0.0:5000 "game_manager:create_app()"
