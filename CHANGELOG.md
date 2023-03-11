@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.8.2](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.8.2) (2023-03-11)
+
+[Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.8.1...v1.8.2)
+
+**Breaking changes:**
+
+- refactor: migrate Rust from a statefulset to a deployment [\#63](https://github.com/chrisjohnson00/k8s-game-manager/pull/63) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v1.8.1](https://github.com/chrisjohnson00/k8s-game-manager/tree/v1.8.1) (2023-02-19)
 
 [Full Changelog](https://github.com/chrisjohnson00/k8s-game-manager/compare/v1.8.0...v1.8.1)
