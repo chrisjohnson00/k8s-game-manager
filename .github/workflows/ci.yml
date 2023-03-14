@@ -106,7 +106,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
       - name: 'Yaml Lint'
-        uses: 'karancode/yamllint-github-action@v2.1.0'
+        uses: 'karancode/yamllint-github-action@v2.1.1'
         with:
           yamllint_comment: 'true'
           yamllint_config_datapath: '{"extends":"default","rules":{"line-length":{"max":360,"level":"warning"},"truthy":{"check-keys":false},"document-start":{"present":false}}}'
