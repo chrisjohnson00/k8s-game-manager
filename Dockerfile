@@ -2,7 +2,7 @@ FROM node:19.7.0-slim as npmbuild
 WORKDIR /usr/src/app
 RUN npm install vanilla-jsoneditor
 
-FROM python:3.11.2-slim as appbuild
+FROM python:3.11.3-slim as appbuild
 
 WORKDIR /usr/src/app
 EXPOSE 5000
